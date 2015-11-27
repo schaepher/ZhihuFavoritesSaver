@@ -9,3 +9,5 @@ ZhihuParserWithoutGUI.py 没有界面，命令行的操作
 
 输入地址的格式为：  
 http://www.zhihu.com/question/问题号  
+或者（命令行版本）  
+http://www.zhihu.com/question/问题号/answer/答案号  
