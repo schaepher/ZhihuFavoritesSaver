@@ -11,21 +11,12 @@ def parser(url):
 	htmlBytes = urllib.request.urlopen(url).read()
 	html = htmlBytes.decode('UTF-8')
 	
-	title = re.compile(r'<h2.+?>\s+(.+?)\s+</h2>',re.DOTALL)
-	titleArray = title.findall(html)
+	title = re.compile(r'<h2.+?>\s+(?:<a href=".+?">)?(.+?)(?:</a>)?\s+</h2>.+?<a class="author-link" data-tip=".+?>(.+?)</a>.+?<div class="zm-item-vote-info " data-votecount="(\d+)".+?<div class="zm-editable-content clearfix">\s+(.+?)</div>',re.DOTALL)
+	contentArray = title.findall(html)
 	
-	voteNum = re.compile(r'<div class="zm-item-vote-info " data-votecount="(\d+)"',re.DOTALL)
-	voteArray = voteNum.findall(html)
+	content = '<h2 align="center">'+contentArray[0][0]+'</h2><br><span style="float:right;">赞数：'+contentArray[0][1]+'</span><br><span style="float:right;">作者：'+contentArray[0][2]+'</span><br><br>'+contentArray[0][3]
 	
-	name = re.compile(r'<a class="author-link" data-tip=".+?>(.+?)</a>',re.DOTALL)
-	nameArray = name.findall(html)
-	
-	answer = re.compile(r'<div class="zm-editable-content clearfix">.+?</div>',re.DOTALL)
-	answerArray = answer.findall(html)
-	
-	content = '<h2 align="center">'+titleArray[0]+'</h2><br><span style="float:right;">赞数：'+voteArray[0]+'</span><br><span style="float:right;">作者：'+nameArray[0]+'</span><br><br>'+answerArray[0]
-	
-	write(titleArray[0],content)
+	write(contentArray[0][0],content)
 	
 
 def com():
