@@ -2,7 +2,7 @@ def write(title, data):
     import os
     out = open(title + '.html', 'w', encoding='utf-8')
     print(data, file=out)
-    out.close
+    out.close()
 
 
 def parser(url):

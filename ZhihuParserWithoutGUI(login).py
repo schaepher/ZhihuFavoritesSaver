@@ -1,27 +1,53 @@
+headers_base = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4,zh-TW;q=0.2',
+    'Connection': 'keep-alive',
+    'Host': 'www.zhihu.com',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) '
+                  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36',
+    'Referer': 'http://www.zhihu.com/'
+}
+
+
 def mkdir():
     import os
     path = ".\\result"
     is_exists = os.path.exists(path)
     if not is_exists:
         os.makedirs(path)
-        os.chdir(path)
         return True
     else:
-        os.chdir(path)
         return False
 
 
 def write(title, data):
+    # 截取标题长度，否则太长会导致错误
+    title = title[0:20]
     out = open(title + '.html', 'w', encoding='utf-8')
     print(data, file=out)
     out.close()
 
 
-def parse(html_content):
+def parse(url):
     import re
+    import urllib.request
+    from html.parser import HTMLParser
+    import http.cookiejar
+    import os
+    file_name = 'cookie.ini'
+    cookie_file = http.cookiejar.MozillaCookieJar()
+    cookie = cookie_file.load(file_name, ignore_discard=True, ignore_expires=True)
+    cookie_processor = urllib.request.HTTPCookieProcessor(cookie)
+    opener = urllib.request.build_opener(cookie_processor)
 
-    # html_bytes = urllib.request.urlopen(url)
-    # html_content = html_bytes.read().decode('UTF-8')
+    html_content = urllib.request.Request(url, headers=headers_base)
+    result = opener.open(html_content)
+    html_content = result.read().decode('UTF-8')
+    parse(html_content)
+
+    # 切换到一个专门存放结果的目录中
+    path = ".\\result"
+    os.chdir(path)
 
     title = re.compile(
             r'<h2 class="zm-item-title"><a target="_blank" href="/question/\d+">'
@@ -32,7 +58,7 @@ def parse(html_content):
     content_array = title.findall(html_content)
     content_array_len = len(content_array)
     for i in range(content_array_len):
-        main_content = html_content.unescape(content_array[i][3])
+        main_content = HTMLParser().unescape(content_array[i][3])
         main_content = re.sub('(<img.+?>)', '<br>\\1<br>', main_content)
         content = '<h2 align="center">' + content_array[i][0] + '</h2><br><span style="float:right;">赞数：' + \
                   content_array[i][2] + '</span><br><span style="float:right;">作者：' + content_array[i][
@@ -52,16 +78,6 @@ def login():
         'email': '',
         'password': '',
         'rememberme': 'true'
-    }
-
-    headers_base = {
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4,zh-TW;q=0.2',
-        'Connection': 'keep-alive',
-        'Host': 'www.zhihu.com',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) '
-                      'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36',
-        'Referer': 'http://www.zhihu.com/'
     }
 
     # 打开保存cookie的文件，并设置cookie
@@ -99,18 +115,15 @@ def login():
     start_login = urllib.request.Request(login_url, headers=headers_base)
     result = opener.open(start_login, login_data)
     html_content = result.read().decode('UTF-8')
-
+    print(html_content)
     # 将返回的字符串转为字典dic
     result = eval(html_content)
     result = result.get('msg')
     print(result)
     cookie_file.save(ignore_discard=True, ignore_expires=True)
 
-    shoucangjia = 'https://www.zhihu.com/collection/42917965'
-    shoucangjia_content = urllib.request.Request(shoucangjia, headers=headers_base)
-    result = opener.open(shoucangjia_content)
-    html_content = result.read().decode('UTF-8')
-    parse(html_content)
 
-# mkdir()
+mkdir()
 login()
+m_url = 'https://www.zhihu.com/collection/42917965'
+parse(m_url)
