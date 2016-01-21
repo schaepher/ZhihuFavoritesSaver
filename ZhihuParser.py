@@ -22,7 +22,7 @@ def mkdir():
 
 def write(title, data):
     # 截取标题长度，否则太长会导致错误
-    title = title[0:20]
+    title = title[0:30]
     out = open(title + '.html', 'w', encoding='utf-8')
     print(data, file=out)
     out.close()
@@ -34,16 +34,16 @@ def parse(url):
     from html.parser import HTMLParser
     import http.cookiejar
     import os
-    file_name = 'cookie.ini'
+    file_name = 'cookie.txt'
     cookie_file = http.cookiejar.MozillaCookieJar()
-    cookie = cookie_file.load(file_name, ignore_discard=True, ignore_expires=True)
-    cookie_processor = urllib.request.HTTPCookieProcessor(cookie)
+    cookie_file.load(file_name, ignore_discard=True, ignore_expires=True)
+    cookie_processor = urllib.request.HTTPCookieProcessor(cookie_file)
+
     opener = urllib.request.build_opener(cookie_processor)
 
     html_content = urllib.request.Request(url, headers=headers_base)
     result = opener.open(html_content)
     html_content = result.read().decode('UTF-8')
-    parse(html_content)
 
     # 切换到一个专门存放结果的目录中
     path = ".\\result"
@@ -64,7 +64,7 @@ def parse(url):
                   content_array[i][2] + '</span><br><span style="float:right;">作者：' + content_array[i][
                       1] + '</span><br><br><div class="zm-editable-content clearfix">' + main_content + '</div>'
 
-        write(str(i) + content_array[i][0], content)
+        write(content_array[i][0], content)
 
 
 def login():
@@ -81,7 +81,7 @@ def login():
     }
 
     # 打开保存cookie的文件，并设置cookie
-    cookie_file = http.cookiejar.MozillaCookieJar('cookie.ini')
+    cookie_file = http.cookiejar.MozillaCookieJar('cookie.txt')
     cookie_processor = urllib.request.HTTPCookieProcessor(cookie_file)
     opener = urllib.request.build_opener(cookie_processor)
 
@@ -125,5 +125,5 @@ def login():
 
 mkdir()
 login()
-m_url = 'https://www.zhihu.com/collection/42917965'
-parse(m_url)
+# m_url = 'https://www.zhihu.com/collection/???'
+# parse(m_url)
