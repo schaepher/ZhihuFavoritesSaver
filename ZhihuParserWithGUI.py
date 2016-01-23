@@ -1,3 +1,4 @@
+# Python 3.5
 def mkdir():
     import os
     path = ".\\result"
@@ -12,10 +13,9 @@ def mkdir():
 
 
 def write(title, data):
-    import os
     out = open(title + '.html', 'w', encoding='utf-8')
     print(data, file=out)
-    out.close
+    out.close()
 
 
 def parser(url):
