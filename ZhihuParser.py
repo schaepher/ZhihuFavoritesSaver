@@ -48,19 +48,21 @@ def parse(url):
     os.chdir(path)
 
     title = re.compile(
-            r'<h2 class="zm-item-title"><a target="_blank" href="/question/\d+">'
-            r'(.+?)</a></h2>.+?<a class="author-link" data-tip=.+?>(.+?)</a>.+?'
-            r'<div class="zm-item-vote-info " data-votecount="(\d+)">.+?'
-            r'<textarea class="content hidden">(.+?)<span.+?</textarea>',
+            r'<h2 class="zm-item-title"><a target="_blank" href="/question/\d+">(.+?)</a>'
+            r'</h2>.+?<div class="zm-item-vote-info " data-votecount="(\d+)">.+?data-author-name'
+            r'="(.+?)" data-entry-url="(.+?)">.+?<textarea class="content hidden">(.+?)</textarea>',
             re.DOTALL)
     content_array = title.findall(html_content)
     content_array_len = len(content_array)
     for i in range(content_array_len):
-        main_content = html.unescape(content_array[i][3])
+        main_content = html.unescape(content_array[i][4])
         main_content = re.sub('(<img.+?>)', '<br>\\1<br>', main_content)
-        content = '<h2 align="center">' + content_array[i][0] + '</h2><br><span style="float:right;">赞数：' + \
-                  content_array[i][2] + '</span><br><span style="float:right;">作者：' + content_array[i][
-                      1] + '</span><br><br><div class="zm-editable-content clearfix">' + main_content + '</div>'
+        content = '<h2 align="center">' + content_array[i][0] + '</h2>' + \
+                  '<div align="center"><a href="https://www.zhihu.com' + content_array[i][3] +\
+                  '">www.zhihu.com' + content_array[i][3] + '</a></div>' + \
+                  '<br><span style="float:right;">赞数：' + \
+                  content_array[i][1] + '</span><br><span style="float:right;">作者：' + content_array[i][2] + \
+                  '</span><br><br><div class="zm-editable-content clearfix">' + main_content + '</div>'
         title = content_array[i][0]
         # 英文的问号'?'会使写入失败
         title = title.replace('?', '？')
