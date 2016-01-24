@@ -10,9 +10,8 @@ headers_base = {
 }
 
 
-def mkdir():
+def mkdir(path):
     import os
-    path = ".\\result"
     is_exists = os.path.exists(path)
     if not is_exists:
         os.makedirs(path)
@@ -91,6 +90,7 @@ def get_collection_list(opener):
     import urllib.request
     import re
     import sys
+    import os
     url = "https://www.zhihu.com/collections/mine"
     request_collection = urllib.request.Request(url, headers=headers_base)
     result = opener.open(request_collection)
@@ -112,6 +112,11 @@ def get_collection_list(opener):
             question_number = title_array[line][0]
             url = url.replace('collections/mine', 'collection/' + question_number)
             url += '?page=1'
+
+            # 切换到一个专门存放结果的目录中，以收藏夹的名字命名
+            path = '.\\' + title_array[line][1]
+            mkdir(path)
+            os.chdir(path)
             return url
         else:
             return False
@@ -122,10 +127,6 @@ def get_collection_list(opener):
 def start():
     import os
     opener = get_opener()
-    # 切换到一个专门存放结果的目录中
-    mkdir()
-    path = ".\\result"
-    os.chdir(path)
 
     # 获取收藏夹列表
     url = get_collection_list(opener)
@@ -141,6 +142,7 @@ def start():
             print('第' + str(next_page) + '页')
             next_page = parse(opener, url)
         print('获取完毕！\n\n')
+        os.chdir('..')
         url = get_collection_list(opener)
 
 
