@@ -13,11 +13,13 @@ Python版本 3.5
          Email = xxxx@xxx.com
          Password = xxxx
       ```
-      
-    * 运行一次Login.py，填入验证码即可登陆。
+
+    * 运行Main.py
+
+    * 选择0，填入验证码即可登陆。
       > 只需登录一次即可，以后要再用的时候，不必登录
 
-    * 接着运行ZhihuParser.py
+    * 选择1
       根据提示选择收藏夹所对应的序号，即可下载
 
     > 下一个把界面做上

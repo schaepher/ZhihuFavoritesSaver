@@ -151,6 +151,3 @@ def start():
         print('获取完毕！\n\n')
         os.chdir('..')
         url = get_collection_list(opener)
-
-
-start()

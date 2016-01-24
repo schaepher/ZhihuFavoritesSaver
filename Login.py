@@ -72,6 +72,3 @@ def login():
     print(result)
     cookie_file.save(ignore_discard=True, ignore_expires=True)
     remove('验证码.gif')
-
-
-login()
