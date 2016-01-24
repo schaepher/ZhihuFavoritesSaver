@@ -7,7 +7,7 @@ Python版本 3.5
  
 1.  没有界面，命令行的操作
     * 一开始需要在config.ini里把账号密码填上（不用加引号）：   
-    * 
+
       ```   
          [UserData]
          Email = xxxx@xxx.com
@@ -25,11 +25,9 @@ Python版本 3.5
 
     * 接着运行ZhihuParser.py即可
 
+    > 接下去直接列出收藏夹列表，在命令行里选择想要下载的收藏夹，而不是像现在这样要到config.ini里进行配置  
+    > 其他优化以后再说
 
-* 接下去直接列出收藏夹列表，在命令行里选择想要下载的收藏夹，而不是像现在这样要到config.ini里进行配置  
-* 其他优化以后再说
- 
- 
 2. ZhihuParserWithGUI.py 可以运行在windows上，有GUI界面  
     输入地址的格式为：  
     http://www.zhihu.com/question/问题编号
