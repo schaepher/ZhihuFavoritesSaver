@@ -60,9 +60,16 @@ def parse(opener, url):
                       '<br><span style="float:right;">赞数：' + \
                       answers_array[i][0] + '</span><br><span style="float:right;">作者：' + answers_array[i][1] + \
                       '</span><br><br><div class="zm-editable-content clearfix">' + main_content + '</div><br><br>'
-            # 英文的问号'?'会使写入失败
+            # 替换掉在windows中不合法的文件名字符
             title = title_content.replace('?', '？')
-            title = title.replace('\w', '')
+            title = title.replace('\\', '_')
+            title = title.replace('/', '_')
+            title = title.replace('*', '_')
+            title = title.replace('|', '_')
+            title = title.replace('<', '_')
+            title = title.replace('>', '_')
+            title = title.replace(':', '_')
+            title = title.replace('"', '_')
             write_to_file(title, content)
 
     next_page_re = re.compile('<a href="\?page=(\d*)">下一页</a>', re.DOTALL)
