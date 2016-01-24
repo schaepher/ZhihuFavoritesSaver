@@ -59,3 +59,8 @@ target/
 # Idea files
 .idea/*
 .idea/
+
+# cookie,config and result folder
+*.txt
+result/
+*.gif
