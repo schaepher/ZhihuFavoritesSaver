@@ -1,4 +1,15 @@
 # Python 3.5
+headers_base = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4,zh-TW;q=0.2',
+    'Connection': 'keep-alive',
+    'Host': 'www.zhihu.com',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) '
+                  'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36',
+    'Referer': 'http://www.zhihu.com/'
+}
+
+
 def mkdir():
     import os
     path = ".\\result"
@@ -21,15 +32,6 @@ def parse(opener, url):
     import urllib.request
     import html
 
-    headers_base = {
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4,zh-TW;q=0.2',
-        'Connection': 'keep-alive',
-        'Host': 'www.zhihu.com',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) '
-                      'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.130 Safari/537.36',
-        'Referer': 'http://www.zhihu.com/'
-    }
     request_url = urllib.request.Request(url, headers=headers_base)
     result = opener.open(request_url)
     html_content = result.read().decode('UTF-8')
@@ -85,28 +87,61 @@ def get_opener():
     return opener
 
 
-def start():
-    import configparser
-    import os
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-    url_data = config['Collection']
-    url = url_data['url'] + '?page=1'
-    opener = get_opener()
+def get_collection_list(opener):
+    import urllib.request
+    import re
+    import sys
+    url = "https://www.zhihu.com/collections/mine"
+    request_collection = urllib.request.Request(url, headers=headers_base)
+    result = opener.open(request_collection)
+    html_ccontent = result.read().decode('UTF-8')
 
+    title_re = re.compile(r'<a href="/collection/(\d+)" >(.+?)</a>.+?<span href'
+                          r'="javavscript:;">(.+?)</span>', re.DOTALL)
+    title_array = title_re.findall(html_ccontent)
+    title_len = len(title_array)
+    print('收藏夹列表：')
+    for index in range(title_len):
+        print(str(index) + '\t: ' + title_array[index][1] + '（' + title_array[index][2] + '）')
+    print('\n请选择序号(输入exit退出)：')
+    line = sys.stdin.readline()
+    is_digit = re.match(r'\d+', line)
+    if is_digit:
+        line = int(line)
+        if 0 <= line <= title_len - 1:
+            question_number = title_array[line][0]
+            url = url.replace('collections/mine', 'collection/' + question_number)
+            url += '?page=1'
+            return url
+        else:
+            return False
+    else:
+        return False
+
+
+def start():
+    import os
+    opener = get_opener()
     # 切换到一个专门存放结果的目录中
     mkdir()
     path = ".\\result"
     os.chdir(path)
 
-    # 开始获取
-    print(url)
-    next_page = parse(opener, url)
-    while next_page != '':
-        url_index = url.rfind('page=')
-        url = url[0:url_index + 5] + next_page
-        print(url)
+    # 获取收藏夹列表
+    url = get_collection_list(opener)
+
+    while url is not False:
+        # 开始获取
+        print('开始获取....')
+        print('第1页')
         next_page = parse(opener, url)
+        while next_page != '':
+            url_index = url.rfind('page=')
+            url = url[0:url_index + 5] + next_page
+            print('第' + str(next_page) + '页')
+            next_page = parse(opener, url)
+        print('获取完毕！\n\n')
+        url = get_collection_list(opener)
 
 
 start()

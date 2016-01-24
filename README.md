@@ -14,18 +14,13 @@ Python版本 3.5
          Password = xxxx
       ```
       
-      然后把收藏夹地址复制到[Collection]下面的url里（或者把“xxxxxx”换成收藏夹编号）：  
-      
-      ```
-         url = https://www.zhihu.com/collection/xxxxxx
-      ```
-      
     * 运行一次Login.py，填入验证码即可登陆。
       > 只需登录一次即可，以后要再用的时候，不必登录
 
-    * 接着运行ZhihuParser.py即可
+    * 接着运行ZhihuParser.py
+      根据提示选择收藏夹所对应的序号，即可下载
 
-    > 接下去直接列出收藏夹列表，在命令行里选择想要下载的收藏夹，而不是像现在这样要到config.ini里进行配置  
+    > 下一个把界面做上
     > 其他优化以后再说
 
 2. ZhihuParserWithGUI.py 可以运行在windows上，有GUI界面  
