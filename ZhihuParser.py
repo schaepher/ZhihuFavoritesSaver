@@ -54,12 +54,13 @@ def parse(opener, url):
         for i in range(content_array_len):
             main_content = html.unescape(answers_array[i][3])
             main_content = re.sub('(<img.+?>)', '<br>\\1<br>', main_content)
-            content = '<h2 align="center">' + title_content + '</h2>' + \
-                      '<div align="center"><a href="https://www.zhihu.com' + answers_array[i][2] + \
-                      '">www.zhihu.com' + answers_array[i][2] + '</a></div>' + \
-                      '<br><span style="float:right;">赞数：' + \
-                      answers_array[i][0] + '</span><br><span style="float:right;">作者：' + answers_array[i][1] + \
-                      '</span><br><br><div class="zm-editable-content clearfix">' + main_content + '</div><br><br>'
+            main_content = re.sub(' width=\"\d+\" ', ' width="630" ', main_content)
+            content = '<!DOCTYPE html>\n<meta charset="utf-8"/>\n<h2 align="center">' + title_content + '</h2>\n' + \
+                      '<div align="center">\n<a href="https://www.zhihu.com' + answers_array[i][2] + \
+                      '">www.zhihu.com' + answers_array[i][2] + '</a>\n</div>\n' + \
+                      '<br>\n<span style="float:right;">赞数：' + \
+                      answers_array[i][0] + '</span>\n<br>\n<span style="float:right;">作者：' + answers_array[i][1] + \
+                      '</span>\n<br><br>\n<div class="zm-editable-content clearfix">' + main_content + '</div>\n<br><br>'
             # 替换掉在windows中不合法的文件名字符
             title = title_content.replace('?', '？')
             title = title.replace('\\', '_')
