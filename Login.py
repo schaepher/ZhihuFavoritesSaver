@@ -7,6 +7,9 @@ def login():
     import http.cookiejar
     import configparser
     from os import remove
+    from os import system
+    from os import getcwd
+    import time
     login_data = {
         'email': '',
         'password': '',
@@ -46,7 +49,8 @@ def login():
     login_data['_xsrf'] = xsrf
 
     # 获取验证码，并保存到本地
-    captcha_url = 'http://www.zhihu.com/captcha.gif'
+    code = str(int(1000 * time.time()))[0:13]
+    captcha_url = 'https://www.zhihu.com/captcha.gif?r={}&type=login'.format(code)
     request_captcha = urllib.request.Request(captcha_url, headers=headers_base)
     html_content = opener.open(request_captcha)
     f = open('验证码.gif', 'wb')
@@ -54,6 +58,9 @@ def login():
     f.close()
 
     # 把验证码放入请求的头部
+    print('正在打开验证码，请稍候....')
+    path = getcwd() + '\\验证码.gif'
+    system("START %s" % path)
     print('请输入验证码（验证码图片在该程序所在的文件夹内）:\n')
     captcha_str = sys.stdin.readline()
     login_data['captcha'] = captcha_str[0:4]

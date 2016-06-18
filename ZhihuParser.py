@@ -1,4 +1,5 @@
 # Python 3.5
+
 headers_base = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Accept-Language': 'en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4,zh-TW;q=0.2',
@@ -21,6 +22,16 @@ def mkdir(path):
 
 
 def write_to_file(title, data):
+    # 替换掉在windows中不合法的文件名字符
+    title = title.replace('?', '？')
+    title = title.replace('\\', '_')
+    title = title.replace('/', '_')
+    title = title.replace('*', '_')
+    title = title.replace('|', '_')
+    title = title.replace('<', '_')
+    title = title.replace('>', '_')
+    title = title.replace(':', '_')
+    title = title.replace('"', '_')
     out = open(title + '.html', 'a', encoding='utf-8')
     print(data, file=out)
     out.close()
@@ -42,9 +53,9 @@ def parse(opener, url):
     title_re = re.compile(r'<a target="_blank" href="/question/\d+">(.+?)</a></h2>', re.DOTALL)
 
     answers = re.compile(
-            r'.+?<div class="zm-item-vote-info " data-votecount="(\d+)">.+?data-author-name'
-            r'="(.+?)" data-entry-url="(.+?)">.+?<textarea class="content hidden">(.+?)</textarea>',
-            re.DOTALL)
+        r'.+?<div class="zm-item-vote-info" data-votecount="(\d+)">.+?data-author-name'
+        r'="(.+?)" data-entry-url="(.+?)">.+?<textarea hidden class="content">(.+?)</textarea>.+?(编辑于.+?)</a>',
+        re.DOTALL)
 
     for index in range(questions_array_len):
         title_array = title_re.findall(questions_array[index])
@@ -60,18 +71,9 @@ def parse(opener, url):
                       '">www.zhihu.com' + answers_array[i][2] + '</a>\n</div>\n' + \
                       '<br>\n<span style="float:right;">赞数：' + \
                       answers_array[i][0] + '</span>\n<br>\n<span style="float:right;">作者：' + answers_array[i][1] + \
-                      '</span>\n<br><br>\n<div class="zm-editable-content clearfix">' + main_content + '</div>\n<br><br>'
-            # 替换掉在windows中不合法的文件名字符
-            title = title_content.replace('?', '？')
-            title = title.replace('\\', '_')
-            title = title.replace('/', '_')
-            title = title.replace('*', '_')
-            title = title.replace('|', '_')
-            title = title.replace('<', '_')
-            title = title.replace('>', '_')
-            title = title.replace(':', '_')
-            title = title.replace('"', '_')
-            write_to_file(title, content)
+                      '</span>\n<br><br>\n<div class="zm-editable-content clearfix">' + main_content + '</div>\n' + \
+                      '<br><br>' + answers_array[i][4] + '<br><br>'
+            write_to_file(title_content, content)
 
     next_page_re = re.compile('<a href="\?page=(\d*)">下一页</a>', re.DOTALL)
     next_page = next_page_re.findall(html_content)
@@ -102,11 +104,11 @@ def get_collection_list(opener):
     url = "https://www.zhihu.com/collections/mine"
     request_collection = urllib.request.Request(url, headers=headers_base)
     result = opener.open(request_collection)
-    html_ccontent = result.read().decode('UTF-8')
+    html_content = result.read().decode('UTF-8')
 
     title_re = re.compile(r'<a href="/collection/(\d+)" >(.+?)</a>.+?<span href'
                           r'="javavscript:;">(.+?)</span>', re.DOTALL)
-    title_array = title_re.findall(html_ccontent)
+    title_array = title_re.findall(html_content)
     title_len = len(title_array)
     print('收藏夹列表：')
     for index in range(title_len):
