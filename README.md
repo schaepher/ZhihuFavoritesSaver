@@ -6,7 +6,8 @@ Python版本 3.5
 ###一、如果你没有安装python 3.5  
 
 这里提供了可以直接在windows上使用的可执行文件。  
-在“windows_version”这个文件夹里先配置config.ini再打开Main.exe，就可以使用了。  
+[下载链接](http://files.cnblogs.com/files/schaepher/windows_version.zip)
+先配置config.ini再打开Main.exe，就可以使用了。  
 
 ---
  
